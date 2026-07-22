@@ -348,7 +348,7 @@ export default function SpinWheel() {
       <div className={styles.header}>
         {/* <p className={styles.eyebrow}>Draw a winner</p> */}
         <h1 className={styles.title}>
-          Wheel of <span>Names</span>
+          Raffle <span>Draw</span>
         </h1>
         {/* <p className={styles.subtitle}>
           Add your names on the right, then spin the wheel to pick one at
