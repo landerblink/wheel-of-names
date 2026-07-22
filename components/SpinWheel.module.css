@@ -292,9 +292,9 @@
 }
 
 .winnerBanner {
-  width: min(90vw, 500px);
+  width: min(90vw, 720px);
 
-  padding: 24px;
+  padding: 40px;
   border-radius: 20px;
 
   background: var(--red);

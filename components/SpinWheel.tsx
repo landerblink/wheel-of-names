@@ -466,7 +466,7 @@ export default function SpinWheel() {
                   className={styles.winnerBanner}
                   style={{ position: "relative", zIndex: 2 }}
                 >
-                  <div className="border-2 border-white rounded-2xl p-6">
+                  <div className="border-2 border-white rounded-2xl p-10">
                     <div className="flex justify-center items-center gap-8">
                       <div className="w-full h-0.5 bg-white" />
                       <p className={styles.winnerLabel}>Winner</p>
