@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-display: var(--font-barlow), "Segoe UI", sans-serif;
+  --font-body: var(--font-barlow), "Segoe UI", system-ui, -apple-system,
+    sans-serif;
+
+  --red: #ef0000;
+  --red-dark: #b70000;
+  --black: #000000;
+  --white: #ffffff;
+  --grey-cool: #a3bbbd;
+  --grey-cool-2: #bdccd4;
+  --grey-tint: #f2f6f7;
+
+  --ink: var(--black);
+  --ink-soft: #4d5c5e;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  min-height: 100vh;
+  font-family: var(--font-barlow), "Segoe UI", sans-serif;
+
+  background: url("/assets/BOUNTY_WHEEL_OF_NAMES BG.jpg") center center / cover no-repeat fixed;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  font-family: var(--font-barlow), "Segoe UI", sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--white);
 }
