@@ -164,9 +164,9 @@
 
 .pointer {
   position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  right: -6px;
+  transform: translateY(-50%) rotate(90deg);
   width: 34px;
   height: 40px;
   z-index: 5;

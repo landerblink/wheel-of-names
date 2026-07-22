@@ -282,18 +282,19 @@ export default function SpinWheel() {
     setError(null);
     setWinner(null);
 
-    // Must be created/resumed inside a user gesture (this click) or
-    // browsers will block audio playback.
     ensureAudio();
 
     const targetIndex = Math.floor(Math.random() * names.length);
     const step = 360 / names.length;
     const segmentCenter = targetIndex * step + step / 2;
     const jitter = (Math.random() - 0.5) * (step * 0.7);
-    const desiredMod = (360 - segmentCenter - jitter + 360) % 360;
+
+    const POINTER_ANGLE = 90; // pointer now sits at the right (3 o'clock)
+    const desiredMod =
+      (((POINTER_ANGLE - segmentCenter - jitter) % 360) + 360) % 360;
 
     const currentMod = ((rotation % 360) + 360) % 360;
-    const base = rotation - currentMod; // last full-turn floor
+    const base = rotation - currentMod;
     const extraTurns =
       MIN_EXTRA_TURNS +
       Math.floor(Math.random() * (MAX_EXTRA_TURNS - MIN_EXTRA_TURNS + 1));
