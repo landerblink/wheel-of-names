@@ -316,11 +316,15 @@
 
 .winnerName {
   margin: 0;
+  padding: 16px;
   font-family: var(--font-display), sans-serif;
   font-size: clamp(40px, 6vw, 72px);
   font-weight: 900;
   text-transform: uppercase;
   text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15);
+  line-height: 1;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .winnerActions {
