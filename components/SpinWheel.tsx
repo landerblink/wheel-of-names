@@ -18,7 +18,6 @@ const DEFAULT_NAMES = [
   "Mhy",
   "Dhana",
   "8 M",
-  // "Bonj",
 ];
 
 const RED = "#ef0000";
@@ -26,7 +25,7 @@ const BLACK = "#000000";
 const WHITE = "#ffffff";
 const GREY_COOL = "#a3bbbd";
 
-const SPIN_MS = 8400;
+const SPIN_MS = 10000;
 const MIN_EXTRA_TURNS = 6;
 const MAX_EXTRA_TURNS = 9;
 
