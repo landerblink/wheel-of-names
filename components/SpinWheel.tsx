@@ -204,6 +204,7 @@ export default function SpinWheel() {
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
   const [removeOnWin, setRemoveOnWin] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showEntries, setShowEntries] = useState(true);
 
   const pendingWinnerRef = useRef<string | null>(null);
   const wheelSvgRef = useRef<SVGSVGElement | null>(null);
@@ -282,6 +283,8 @@ export default function SpinWheel() {
     setError(null);
     setWinner(null);
 
+    // Must be created/resumed inside a user gesture (this click) or
+    // browsers will block audio playback.
     ensureAudio();
 
     const targetIndex = Math.floor(Math.random() * names.length);
@@ -289,12 +292,12 @@ export default function SpinWheel() {
     const segmentCenter = targetIndex * step + step / 2;
     const jitter = (Math.random() - 0.5) * (step * 0.7);
 
-    const POINTER_ANGLE = 90; // pointer now sits at the right (3 o'clock)
+    const POINTER_ANGLE = 90; // pointer sits at the right (3 o'clock)
     const desiredMod =
       (((POINTER_ANGLE - segmentCenter - jitter) % 360) + 360) % 360;
 
     const currentMod = ((rotation % 360) + 360) % 360;
-    const base = rotation - currentMod;
+    const base = rotation - currentMod; // last full-turn floor
     const extraTurns =
       MIN_EXTRA_TURNS +
       Math.floor(Math.random() * (MAX_EXTRA_TURNS - MIN_EXTRA_TURNS + 1));
@@ -304,6 +307,30 @@ export default function SpinWheel() {
     setSpinning(true);
     setRotation(finalRotation);
   }
+
+  // Spacebar triggers a spin, unless focus is inside a text input/textarea
+  // (so users can still type spaces into the Entries textarea normally).
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.code !== "Space") return;
+
+      const target = e.target as HTMLElement | null;
+      const isTyping =
+        target &&
+        (target.tagName === "TEXTAREA" ||
+          target.tagName === "INPUT" ||
+          target.isContentEditable);
+
+      if (isTyping) return;
+
+      e.preventDefault(); // stop page from scrolling on spacebar
+      handleSpin();
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spinning, names, rotation]);
 
   function handleTransitionEnd() {
     if (!spinning) return;
@@ -356,11 +383,19 @@ export default function SpinWheel() {
         </p> */}
       </div>
 
-      <div className={styles.layout}>
+      <button
+        type="button"
+        className={styles.toggleEntriesBtn}
+        onClick={() => setShowEntries((v) => !v)}
+      >
+        {showEntries ? "Hide entries" : "Show entries"}
+      </button>
+
+      <div
+        className={`${styles.layout} ${!showEntries ? styles.layoutSingle : ""}`}
+      >
         {/* Wheel ticket */}
         <section className={styles.ticket}>
-          {/* <span className={styles.ticketNotchLeft} aria-hidden="true" />
-          <span className={styles.ticketNotchRight} aria-hidden="true" /> */}
           <div className={styles.wheelPanel}>
             <div className={styles.wheelStage}>
               <svg
@@ -501,66 +536,66 @@ export default function SpinWheel() {
         </section>
 
         {/* Entries ticket */}
-        <section className={styles.ticket}>
-          {/* <span className={styles.ticketNotchLeft} aria-hidden="true" />
-          <span className={styles.ticketNotchRight} aria-hidden="true" /> */}
-          <div className="flex w-full justify-center items-center">
-            <h2 className={styles.entriesTitle}>Entries</h2>
-          </div>
-          <div className={styles.entriesPanel}>
-            <p className={styles.entriesHelp}>
-              One name per line.
-              <br />
-              Duplicates may get extra chances.
-            </p>
-
-            <div className={styles.entriesListWrap}>
-              <span className={styles.entriesCountBadge}>{names.length}</span>
-              <textarea
-                className={styles.textarea}
-                value={namesInput}
-                onChange={(e) => setNamesInput(e.target.value)}
-                spellCheck={false}
-                placeholder={"Juan\nMaria\nPedro"}
-              />
+        {showEntries && (
+          <section className={styles.ticket}>
+            <div className="flex w-full justify-center items-center">
+              <h2 className={styles.entriesTitle}>Entries</h2>
             </div>
+            <div className={styles.entriesPanel}>
+              <p className={styles.entriesHelp}>
+                One name per line.
+                <br />
+                Duplicates may get extra chances.
+              </p>
 
-            <label className={styles.checkboxRow}>
-              <input
-                type="checkbox"
-                checked={removeOnWin}
-                onChange={(e) => setRemoveOnWin(e.target.checked)}
-              />
-              Remove winner after each spin
-            </label>
+              <div className={styles.entriesListWrap}>
+                <span className={styles.entriesCountBadge}>{names.length}</span>
+                <textarea
+                  className={styles.textarea}
+                  value={namesInput}
+                  onChange={(e) => setNamesInput(e.target.value)}
+                  spellCheck={false}
+                  placeholder={"Juan\nMaria\nPedro"}
+                />
+              </div>
 
-            <button
-              type="button"
-              className={styles.shuffleBtn}
-              onClick={handleShuffle}
-              disabled={names.length < 2}
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
+              <label className={styles.checkboxRow}>
+                <input
+                  type="checkbox"
+                  checked={removeOnWin}
+                  onChange={(e) => setRemoveOnWin(e.target.checked)}
+                />
+                Remove winner after each spin
+              </label>
+
+              <button
+                type="button"
+                className={styles.shuffleBtn}
+                onClick={handleShuffle}
+                disabled={names.length < 2}
               >
-                <path d="M16 3h5v5" />
-                <path d="M4 20 21 3" />
-                <path d="M21 16v5h-5" />
-                <path d="M15 15l6 6" />
-                <path d="M4 4l5 5" />
-              </svg>
-              Shuffle
-            </button>
-          </div>
-        </section>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M16 3h5v5" />
+                  <path d="M4 20 21 3" />
+                  <path d="M21 16v5h-5" />
+                  <path d="M15 15l6 6" />
+                  <path d="M4 4l5 5" />
+                </svg>
+                Shuffle
+              </button>
+            </div>
+          </section>
+        )}
       </div>
     </main>
   );
